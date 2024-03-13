@@ -153,4 +153,4 @@ class DictionaryCyclicBehaviour extends CyclicBehaviour
 	}
 }
 
-//class Zad1 extends test
+//class Zad1 extends test2
