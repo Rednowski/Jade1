@@ -38,6 +38,7 @@ public class ServiceAgent extends Agent {
 		
 		addBehaviour(new WordnetCyclicBehaviour(this));
 		addBehaviour(new DictionaryCyclicBehaviour(this));
+		addBehaviour(new FdPolEngDictionaryCyclicBehaviour(this));
 		//doDelete();
 	}
 	protected void takeDown() {
