@@ -14,26 +14,19 @@ public class ServiceAgent extends Agent {
 		DFAgentDescription dfad = new DFAgentDescription();
 		dfad.setName(getAID());
 		//service no 1
-		ServiceDescription sd1 = new ServiceDescription();
-		sd1.setType("answers");
-		sd1.setName("wordnet");
+
 		//service no 2
 		ServiceDescription sd2 = new ServiceDescription();
 		sd2.setType("answers");
 		sd2.setName("dictionary");
 
-		ServiceDescription sd3 = new ServiceDescription();
-		sd3.setType("answers");
-		sd3.setName("fd-pol-eng");
 
 		ServiceDescription sd4 = new ServiceDescription();
-		sd3.setType("answers");
-		sd3.setName("any");
+		sd4.setType("answers");
+		sd4.setName("any");
 
 		//add them all
-		dfad.addServices(sd1);
 		dfad.addServices(sd2);
-		dfad.addServices(sd3);
 		dfad.addServices(sd4);
 		try {
 			DFService.register(this,dfad);
@@ -41,9 +34,7 @@ public class ServiceAgent extends Agent {
 			ex.printStackTrace();
 		}
 
-		addBehaviour(new WordnetCyclicBehaviour(this));
 		addBehaviour(new DictionaryCyclicBehaviour(this));
-		addBehaviour(new FdPolEngDictionaryCyclicBehaviour(this));
 		addBehaviour(new AnyDictionaryCyclicBehaviour(this));
 		//doDelete();
 	}
@@ -94,41 +85,6 @@ public class ServiceAgent extends Agent {
 	}
 }
 
-class WordnetCyclicBehaviour extends CyclicBehaviour
-{
-	ServiceAgent agent;
-	public WordnetCyclicBehaviour(ServiceAgent agent)
-	{
-		this.agent = agent;
-	}
-	public void action()
-	{
-		MessageTemplate template = MessageTemplate.MatchOntology("wordnet");
-		ACLMessage message = agent.receive(template);
-		if (message == null)
-		{
-			block();
-		}
-		else
-		{
-			//process the incoming message
-			String content = message.getContent();
-			ACLMessage reply = message.createReply();
-			reply.setPerformative(ACLMessage.INFORM);
-			String response = "";
-			try
-			{
-				response = agent.makeRequest("wn",content);
-			}
-			catch (NumberFormatException ex)
-			{
-				response = ex.getMessage();
-			}
-			reply.setContent(response);
-			agent.send(reply);
-		}
-	}
-}
 
 class DictionaryCyclicBehaviour extends CyclicBehaviour
 {
@@ -166,41 +122,6 @@ class DictionaryCyclicBehaviour extends CyclicBehaviour
 	}
 }
 
-class FdPolEngDictionaryCyclicBehaviour extends CyclicBehaviour
-{
-	ServiceAgent agent;
-	public FdPolEngDictionaryCyclicBehaviour(ServiceAgent agent)
-	{
-		this.agent = agent;
-	}
-	public void action()
-	{
-		MessageTemplate template = MessageTemplate.MatchOntology("fd-pol-eng");
-		ACLMessage message = agent.receive(template);
-		if (message == null)
-		{
-			block();
-		}
-		else
-		{
-			//process the incoming message
-			String content = message.getContent();
-			ACLMessage reply = message.createReply();
-			reply.setPerformative(ACLMessage.INFORM);
-			String response = "";
-			try
-			{
-				response = agent.makeRequest("fd-pol-eng", content);
-			}
-			catch (NumberFormatException ex)
-			{
-				response = ex.getMessage();
-			}
-			reply.setContent(response);
-			agent.send(reply);
-		}
-	}
-}
 
 class AnyDictionaryCyclicBehaviour extends CyclicBehaviour
 {

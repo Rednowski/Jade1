@@ -97,7 +97,7 @@ class FdPolDeuDictionaryCyclicBehaviour extends CyclicBehaviour
             String response = "";
             try
             {
-                response = agent.makeRequest("fd-pol-deu", content);
+                response = agent.makeRequest(message.getOntology(), content);
             }
             catch (NumberFormatException ex)
             {
