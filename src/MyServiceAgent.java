@@ -8,13 +8,14 @@ import java.net.*;
 import java.io.*;
 
 public class MyServiceAgent extends Agent {
+
     protected void setup () {
         //services registration at DF
         DFAgentDescription dfad = new DFAgentDescription();
         dfad.setName(getAID());
         ServiceDescription sd3 = new ServiceDescription();
         sd3.setType("answers");
-        sd3.setName("fd-pol-deu");
+        sd3.setName("all");
 
         dfad.addServices(sd3);
         try {
@@ -82,7 +83,7 @@ class FdPolDeuDictionaryCyclicBehaviour extends CyclicBehaviour
     }
     public void action()
     {
-        MessageTemplate template = MessageTemplate.MatchOntology("fd-pol-deu");
+        MessageTemplate template = MessageTemplate.MatchOntology("all");
         ACLMessage message = agent.receive(template);
         if (message == null)
         {
@@ -97,7 +98,7 @@ class FdPolDeuDictionaryCyclicBehaviour extends CyclicBehaviour
             String response = "";
             try
             {
-                response = agent.makeRequest(message.getOntology(), content);
+                response = agent.makeRequest(message.getUserDefinedParameter("language"), content);
             }
             catch (NumberFormatException ex)
             {
