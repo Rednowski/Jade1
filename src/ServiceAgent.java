@@ -26,19 +26,25 @@ public class ServiceAgent extends Agent {
 		sd3.setType("answers");
 		sd3.setName("fd-pol-eng");
 
+		ServiceDescription sd4 = new ServiceDescription();
+		sd3.setType("answers");
+		sd3.setName("any");
+
 		//add them all
 		dfad.addServices(sd1);
 		dfad.addServices(sd2);
 		dfad.addServices(sd3);
+		dfad.addServices(sd4);
 		try {
 			DFService.register(this,dfad);
 		} catch (FIPAException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		addBehaviour(new WordnetCyclicBehaviour(this));
 		addBehaviour(new DictionaryCyclicBehaviour(this));
 		addBehaviour(new FdPolEngDictionaryCyclicBehaviour(this));
+		addBehaviour(new AnyDictionaryCyclicBehaviour(this));
 		//doDelete();
 	}
 	protected void takeDown() {
@@ -185,6 +191,43 @@ class FdPolEngDictionaryCyclicBehaviour extends CyclicBehaviour
 			try
 			{
 				response = agent.makeRequest("fd-pol-eng", content);
+			}
+			catch (NumberFormatException ex)
+			{
+				response = ex.getMessage();
+			}
+			reply.setContent(response);
+			agent.send(reply);
+		}
+	}
+}
+
+class AnyDictionaryCyclicBehaviour extends CyclicBehaviour
+{
+	ServiceAgent agent;
+	public AnyDictionaryCyclicBehaviour(ServiceAgent agent)
+	{
+		this.agent = agent;
+	}
+	public void action()
+	{
+		MessageTemplate template = MessageTemplate.MatchOntology("any");
+		ACLMessage message = agent.receive(template);
+		if (message == null)
+		{
+			block();
+		}
+		else
+		{
+			//process the incoming message
+			String ontology = message.getOntology();
+			String content = message.getContent();
+			ACLMessage reply = message.createReply();
+			reply.setPerformative(ACLMessage.INFORM);
+			String response = "";
+			try
+			{
+				response = agent.makeRequest(ontology, content);
 			}
 			catch (NumberFormatException ex)
 			{
