@@ -15,7 +15,7 @@ public class MyServiceAgent extends Agent {
         dfad.setName(getAID());
         ServiceDescription sd3 = new ServiceDescription();
         sd3.setType("answers");
-        sd3.setName("all");
+        sd3.setName("fd-pol-deu");
 
         dfad.addServices(sd3);
         try {
@@ -83,7 +83,7 @@ class FdPolDeuDictionaryCyclicBehaviour extends CyclicBehaviour
     }
     public void action()
     {
-        MessageTemplate template = MessageTemplate.MatchOntology("all");
+        MessageTemplate template = MessageTemplate.MatchOntology("fd-pol-deu");
         ACLMessage message = agent.receive(template);
         if (message == null)
         {
@@ -98,7 +98,7 @@ class FdPolDeuDictionaryCyclicBehaviour extends CyclicBehaviour
             String response = "";
             try
             {
-                response = agent.makeRequest(message.getUserDefinedParameter("language"), content);
+                response = agent.makeRequest(message.getOntology(), content);
             }
             catch (NumberFormatException ex)
             {
