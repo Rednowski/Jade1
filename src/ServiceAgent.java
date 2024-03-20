@@ -23,7 +23,7 @@ public class ServiceAgent extends Agent {
 
 		ServiceDescription sd4 = new ServiceDescription();
 		sd4.setType("answers");
-		sd4.setName("any");
+		sd4.setName("anydictionary");
 
 		//add them all
 		dfad.addServices(sd2);
@@ -132,8 +132,7 @@ class AnyDictionaryCyclicBehaviour extends CyclicBehaviour
 	}
 	public void action()
 	{
-		MessageTemplate template = MessageTemplate.MatchOntology("any");
-		ACLMessage message = agent.receive(template);
+		ACLMessage message = agent.receive();
 		if (message == null)
 		{
 			block();
@@ -141,14 +140,13 @@ class AnyDictionaryCyclicBehaviour extends CyclicBehaviour
 		else
 		{
 			//process the incoming message
-			String ontology = message.getOntology();
 			String content = message.getContent();
 			ACLMessage reply = message.createReply();
 			reply.setPerformative(ACLMessage.INFORM);
 			String response = "";
 			try
 			{
-				response = agent.makeRequest(ontology, content);
+				response = agent.makeRequest(message.getOntology(), content);
 			}
 			catch (NumberFormatException ex)
 			{
