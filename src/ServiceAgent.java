@@ -111,6 +111,7 @@ class DictionaryCyclicBehaviour extends CyclicBehaviour
 			try
 			{
 				response = agent.makeRequest("english", content);
+
 			}
 			catch (NumberFormatException ex)
 			{

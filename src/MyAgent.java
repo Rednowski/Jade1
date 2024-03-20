@@ -8,6 +8,7 @@ import jade.domain.FIPAAgentManagement.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
 
 public class MyAgent extends Agent {
 	protected void setup () {
@@ -37,6 +38,7 @@ public class MyAgent extends Agent {
 }
 
 class MyCyclicBehaviour extends CyclicBehaviour {
+	HashMap<Integer, String> mapa = new HashMap<Integer, String>();
 	MyAgent myAgent;
 	public MyCyclicBehaviour(MyAgent myAgent) {
 		this.myAgent = myAgent;
@@ -46,8 +48,11 @@ class MyCyclicBehaviour extends CyclicBehaviour {
 		if (message == null) {
 			block();
 		} else {
+			int id = 0;
+
 			String ontology = message.getOntology();
 			String content = message.getContent();
+			mapa.put(id++, content);
 			int performative = message.getPerformative();
 			if (performative == ACLMessage.REQUEST)
 			{
@@ -80,6 +85,7 @@ class MyCyclicBehaviour extends CyclicBehaviour {
 			else
 			{	//when it is an answer
 				myAgent.displayHtmlResponse(content);
+				//hashmap get i wpisanie do content zeby przekazac ta wiadomosc
 			}
 		}
 	}
