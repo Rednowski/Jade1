@@ -9,8 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class MyAgent extends Agent {
+	protected HashMap<String, String> mapa = new HashMap<>();
 	protected void setup () {
 		displayResponse("Hello, I am " + getAID().getLocalName());
 		addBehaviour(new MyCyclicBehaviour(this));
@@ -38,7 +40,6 @@ public class MyAgent extends Agent {
 }
 
 class MyCyclicBehaviour extends CyclicBehaviour {
-	HashMap<Integer, String> mapa = new HashMap<Integer, String>();
 	MyAgent myAgent;
 	public MyCyclicBehaviour(MyAgent myAgent) {
 		this.myAgent = myAgent;
@@ -48,15 +49,14 @@ class MyCyclicBehaviour extends CyclicBehaviour {
 		if (message == null) {
 			block();
 		} else {
-			int id = 0;
-
 			String ontology = message.getOntology();
 			String content = message.getContent();
-			mapa.put(id++, content);
 			int performative = message.getPerformative();
 			if (performative == ACLMessage.REQUEST)
 			{
 				//I cannot answer but I will search for someone who can
+				String idmap = UUID.randomUUID().toString();
+				myAgent.mapa.put(idmap, content);
 				DFAgentDescription dfad = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
 				sd.setName("anydictionary");
@@ -73,6 +73,7 @@ class MyCyclicBehaviour extends CyclicBehaviour {
 						forward.addReceiver(new AID(foundAgent, AID.ISLOCALNAME));
 						forward.setContent(content);
 						forward.setOntology(ontology);
+						forward.setReplyWith(idmap);
 						myAgent.send(forward);
 					}
 				}
@@ -84,7 +85,9 @@ class MyCyclicBehaviour extends CyclicBehaviour {
 			}
 			else
 			{	//when it is an answer
-				myAgent.displayHtmlResponse(content);
+				String word = myAgent.mapa.get(message.getInReplyTo());
+				String response = "Slowo: " + word + "<br>" + "Klucz: " + message.getInReplyTo() + content;
+				myAgent.displayHtmlResponse(response);
 				//hashmap get i wpisanie do content zeby przekazac ta wiadomosc
 			}
 		}
